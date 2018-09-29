@@ -42,7 +42,7 @@ elseif PostCheck then
 	   	        return true
     	    	end
 		size = size + len(data)
-		local m = ngxmatch(data,'Content-Disposition: form-data;(.+)filename="(.+)\\.(.*)"','ijo')
+		local m = ngxmatch(data,[[Content-Disposition: form-data;(.+)filename="(.+)\\.(.*)"]],'ijo')
         	if m then
             		fileExtCheck(m[3])
             		filetranslate = true
@@ -69,13 +69,16 @@ elseif PostCheck then
 				return
 			end
 			for key, val in pairs(args) do
-				if type(val) == "table" or val == false then
+				if type(val) == "table" then
+					if type(val[1]) == "boolean" then
+						return
+					end
 					data=table.concat(val, ", ")
 				else
 					data=val
 				end
 				if data and type(data) ~= "boolean" and body(data) then
-                  return true
+                			body(key)
 				end
 			end
 		end
